@@ -39,11 +39,16 @@ function invert(D::Dict)
             invD[D[k]] =[k]
         end
     end
+    for k in keys(invD)
+        invD[k] = length(invD[k]) == 1 ? invD[k][1] : invD[k]
+    end
     K = typejoin(typeof.(keys(invD))...)
     V = typejoin(typeof.(values(invD))...)
     Dict{K,V}(invD)
 end
 
+
+#some utilities 
 hashkv(D) = Dict(hash(value) => hash(key) for (key, value) in D)
 
 

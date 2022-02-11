@@ -3,6 +3,9 @@ uuid = "cbd430ec-77ce-45a7-8a10-accba12b1c72"
 authors = ["Leo Breston <leo.breston@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
+
 [compat]
 julia = "1"
 
