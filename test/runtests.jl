@@ -3,18 +3,41 @@ import Associates: hashkv
 using Accessors
 using Test
 
-    v = collect(1:1:26)
+v = collect(1:1:26)
 v
 D1 = Dict(zip('A':'Z',v))
-D2 = Dict(zip(v,rand(26)))
-    m1= GMap(D1)
 
-    dom(m1)
-    codom(m2)
-    m2= GMap(D2)
-    m2∘m1
-    inv(m1).forward
+
+D2 = Dict(zip(v,rand(26)))
+
+m1= GMap(D1)
+
+dom(m1)
+codom(m1)
+dom(m1)
+
+m2= GMap(D2)
+dom(m2)
+codom(m2)
+dom(m2∘m1)
+codom(m2∘m1)
+
+
+m1
+inv(m1).forward
+
+
+# function (+)(D1::Dict, D2::Dict) 
+#     for k in keys(D1)
+#         if k in keys(D2)
+#             push!(D2[k], k)
+#         else
+#             D2[k] = D1[k]
+#         end
+#     end
+# end
     
+Dict(zip(["1","b","z"], [1,2,3])) ∪ Dict(zip(["1","b","z"], [4,5,6]))
 
 @testset "Associates.jl" begin
     # Write your tests here.
