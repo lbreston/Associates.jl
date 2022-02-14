@@ -1,16 +1,31 @@
 module Associates
 
 # import InverseFunctions: inverse
-import Base: inv, ∘, +, ×, \, /, ∪, ∩
+
+import Base: show, inv, ∘, ×, \, /, ∪, ∩
+import Base.Iterators: product
 
 #export types
 export GMap
 
 #export functions
-export dom, image, preimage, codom, inverse, inv, ∘, compose, \, /, ∪, ∩
+export show, dom, codom, image, preimage, inverse, inv, ∘, compose, \, /, ∪, ∩, ×
+
 struct GMap
     forward::Dict
     backward::Dict
+end
+
+function show(io::IO, m::GMap)
+    dt = keytype(m.forward)
+    ct = keytype(m.backward)
+
+    println( io, "$dt -> $ct" )
+
+    compact = get(io, :compact, false)
+    # if !compact
+    #     show(io, m.forward)
+    # end
 end
 
 GMap(forward::Dict) = GMap(forward, invert(forward))
@@ -37,7 +52,7 @@ compose(m2, m1) = GMap(Dict(zip(pull_back(m2, m1), push_forward(m2, m1))))
 
 (∘)(m2::GMap, m1::GMap) = compose(m2, m1)
 
-(∘)(s::Set, m1::GMap) = Set(S ∩ codom(m1))
+(∘)(s::Set, m1::GMap) = Set(s ∩ codom(m1))
 
 (∘)(m2::GMap, S::Set) = Set(image(m2, S ∩ dom(m2)))
 
@@ -49,15 +64,9 @@ compose(m2, m1) = GMap(Dict(zip(pull_back(m2, m1), push_forward(m2, m1))))
 
 (\)(m1::GMap, m2::GMap) = inverse(m2)∘m1
 
-
-
-
-
-
-
+(×)(m1::GMap, m2::GMap) = GMap(Dict(zip(product(keys(m2.forward),keys(m1.forward)), product(values(m2.forward), values(m1.forward)))))
 
 #some utilities 
-
 hashkv(D) = Dict(hash(value) => hash(key) for (key, value) in D)
 
 fun2dict(fun, d)= Dict(zip(d, map(fun, d)))
@@ -81,4 +90,9 @@ end
 
 
 
+
+
+
 end
+
+
