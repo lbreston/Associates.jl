@@ -1,16 +1,17 @@
 using Associates
 import Associates: hashkv
-using Accessors
 using Test
 
 v = collect(1:1:26)
-v
+
 D1 = Dict(zip('A':'Z',v))
 
+import Base.Iterators.product
 
 D2 = Dict(zip(v,rand(26)))
 
 m1= GMap(D1)
+inverse(m1)
 
 dom(m1)
 codom(m1)
@@ -20,12 +21,13 @@ m2= GMap(D2)
 dom(m2)
 codom(m2)
 dom(m2∘m1)
-codom(m2∘m1)
 
 
 m1
 inv(m1).forward
 
+using AbstractTrees
+Tree(m2.forward)
 
 # function (+)(D1::Dict, D2::Dict) 
 #     for k in keys(D1)
