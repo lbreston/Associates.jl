@@ -56,6 +56,8 @@ compose(m2, m1) = GMap(Dict(zip(pull_back(m2, m1), push_forward(m2, m1))))
 
 (∘)(m2::GMap, S::Set) = Set(image(m2, S ∩ dom(m2)))
 
+(∘)(f::Function, m1::GMap) = compose(GMap(f,codom(m1)), m1)
+
 (∪)(m1::GMap, m2::GMap) = GMap(Dict(m1.forward ∪ m2.forward))
 
 (∩)(m1::GMap, m2::GMap) = GMap(Dict(m1.forward ∩ m2.forward))
