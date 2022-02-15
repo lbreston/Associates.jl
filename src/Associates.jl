@@ -2,7 +2,7 @@ module Associates
 
 # import InverseFunctions: inverse
 
-import Base: show, inv, ∘, ×, \, /, ∪, ∩
+import Base: show, inv, ∘, \, /, ∪, ∩
 import Base.Iterators: product
 
 #export types
@@ -29,6 +29,7 @@ function show(io::IO, m::GMap)
 end
 
 GMap(forward::Dict) = GMap(forward, invert(forward))
+
 GMap(fun::Function, d) = GMap(fun2dict(fun, d))
 
 (m::GMap)(x) = applymap(m, x)
@@ -37,8 +38,12 @@ dom(m::GMap) = keys(m.forward)
 inverse(m::GMap) = GMap(m.backward, m.forward)
 inv(m::GMap) = inverse(m)
 
-
-image(m::GMap, x) = unique(m.(x))
+(⋓)(a,b)=(∪)([a],[b])
+(⋓)(a::T,b) where {T<:Union{AbstractVector,AbstractSet}} =(∪)(a,[b])
+(⋓)(a, b::T) where {T<:Union{AbstractVector,AbstractSet}} =(∪)([a],b)
+(⋓)(a::T, b::T) where {T<:Union{AbstractVector,AbstractSet}} =(∪)(a,b)
+image(m::GMap, x::T) where {T<:Union{AbstractVector,AbstractSet}} = reduce(⋓, m.(x))
+image(m::GMap, x) = reduce(⋓, m(x))
 image(m::GMap) = codom(m)
 preimage(m::GMap) = dom(m)
 preimage(m::GMap, x) = image(inverse(m), x)
@@ -47,8 +52,8 @@ codom(m::GMap) = dom(inverse(m))
 
 pull_back(m2,m1) = dom(m2) ∩ codom(m1) |> x -> preimage(m1, x) 
 push_forward(m2, m1) = m2.(m1.(pull_back(m2, m1)))
-
 compose(m2, m1) = GMap(Dict(zip(pull_back(m2, m1), push_forward(m2, m1))))
+# compose(m2, m1) = GMap(x->m2(x), collect(pull_back(m2,m1)))
 
 (∘)(m2::GMap, m1::GMap) = compose(m2, m1)
 
@@ -56,7 +61,7 @@ compose(m2, m1) = GMap(Dict(zip(pull_back(m2, m1), push_forward(m2, m1))))
 
 (∘)(m2::GMap, S::Set) = Set(image(m2, S ∩ dom(m2)))
 
-(∘)(f::Function, m1::GMap) = compose(GMap(f,codom(m1)), m1)
+(∘)(f::Function, m1::GMap) = compose(GMap(f, collect(codom(m1))), m1)
 
 (∪)(m1::GMap, m2::GMap) = GMap(Dict(m1.forward ∪ m2.forward))
 
@@ -72,6 +77,15 @@ compose(m2, m1) = GMap(Dict(zip(pull_back(m2, m1), push_forward(m2, m1))))
 hashkv(D) = Dict(hash(value) => hash(key) for (key, value) in D)
 
 fun2dict(fun, d)= Dict(zip(d, map(fun, d)))
+
+function unwrapsinglet(x) 
+    if isa(x,Vector)
+        length(x) == 1 ? x[1] : x
+    else
+        x
+    end
+end
+
 
 function invert(D::Dict)
     invD = Dict()
@@ -89,9 +103,6 @@ function invert(D::Dict)
     V = typejoin(typeof.(values(invD))...)
     Dict{K,V}(invD)
 end
-
-
-
 
 
 

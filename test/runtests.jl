@@ -1,6 +1,9 @@
 using Associates
-import Associates: hashkv
+import Associates: unwrapsinglet
 using Test
+
+x=[1,2]
+unwrapsinglet(x)
 
 v = collect(1:1:26)
 
